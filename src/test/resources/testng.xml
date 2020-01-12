@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Persistence API Tests">
+    <test name="MySQL">
+        <classes>
+            <class name="org.panteleyev.mysqlapi.TableCreationTest"/>
+            <class name="org.panteleyev.mysqlapi.TestBatchInsert"/>
+            <class name="org.panteleyev.mysqlapi.TestForeignKey"/>
+            <class name="org.panteleyev.mysqlapi.TestJson"/>
+            <class name="org.panteleyev.mysqlapi.TestMySqlClient"/>
+            <class name="org.panteleyev.mysqlapi.TestPrimaryKey"/>
+            <class name="org.panteleyev.mysqlapi.TestRecords"/>
+            <class name="org.panteleyev.mysqlapi.TestSelfReferenceForeignKey"/>
+            <class name="org.panteleyev.mysqlapi.TestStringPrimaryKey"/>
+            <class name="org.panteleyev.mysqlapi.TestUtilities"/>
+            <class name="org.panteleyev.mysqlapi.TestUuidPrimaryKey"/>
+            <class name="org.panteleyev.mysqlapi.TestUuidRecord"/>
+        </classes>
+    </test>
+</suite>
