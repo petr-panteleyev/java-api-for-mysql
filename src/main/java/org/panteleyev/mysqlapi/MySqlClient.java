@@ -1049,4 +1049,17 @@ public class MySqlClient {
         //noinspection unchecked
         return (K) primaryKey.handle.get(record);
     }
+
+    /**
+     * This method updates module <code>org.panteleyev.mysqlapi</code> to read given modules.
+     * <p>
+     * Calling this method replaces command line option <code>--add-reads
+     * org.panteleyev.mysqlapi=&lt;module&gt;</code>.
+     *
+     * @param modules collection of client modules
+     */
+    public static void addReads(Collection<Module> modules) {
+        var thisModule = MySqlClient.class.getModule();
+        modules.forEach(thisModule::addReads);
+    }
 }

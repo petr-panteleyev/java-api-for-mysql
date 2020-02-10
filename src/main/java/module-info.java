@@ -200,7 +200,6 @@ public class ChildTable implements Record {
 open module org.panteleyev.mysqlapi {
     requires java.base;
     requires java.sql;
-    requires java.desktop;
     requires java.naming;
     requires mysql.connector.java;
 
