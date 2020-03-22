@@ -38,8 +38,7 @@ public class ImmutableBinaryRecord implements Record {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object instanceof ImmutableBinaryRecord) {
-            ImmutableBinaryRecord that = (ImmutableBinaryRecord) object;
+        } else if (object instanceof ImmutableBinaryRecord that) {
             return Objects.equals(this.id, that.id)
                     && Arrays.equals(this.a, that.a);
         } else {

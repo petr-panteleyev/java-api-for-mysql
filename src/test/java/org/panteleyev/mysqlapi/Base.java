@@ -9,6 +9,7 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 import org.panteleyev.mysqlapi.model.ImmutableBinaryRecord;
 import org.panteleyev.mysqlapi.model.ImmutableRecord;
 import org.panteleyev.mysqlapi.model.ImmutableRecordWithPrimitives;
+import org.panteleyev.mysqlapi.model.RecordAsRecord;
 import org.panteleyev.mysqlapi.model.RecordWithAllTypes;
 import org.panteleyev.mysqlapi.model.RecordWithOptionals;
 import org.panteleyev.mysqlapi.model.RecordWithPrimitives;
@@ -86,7 +87,8 @@ public class Base {
             {ImmutableRecord.class},
             {RecordWithPrimitives.class},
             {ImmutableRecordWithPrimitives.class},
-            {ImmutableBinaryRecord.class}
+            {ImmutableBinaryRecord.class},
+            {RecordAsRecord.class}
         };
     }
 

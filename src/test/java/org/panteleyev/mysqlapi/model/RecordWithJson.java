@@ -50,11 +50,10 @@ public class RecordWithJson implements Record<Integer> {
             return true;
         }
 
-        if (!(object instanceof RecordWithJson)) {
+        if (!(object instanceof RecordWithJson that)) {
             return false;
         }
 
-        var that = (RecordWithJson) object;
         return this.id == that.id
             && Objects.equals(this.json, that.json);
     }

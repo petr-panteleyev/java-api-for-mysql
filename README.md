@@ -14,7 +14,7 @@ The library is intended for desktop applications that perform insert/update/dele
 <dependency>
     <groupId>org.panteleyev</groupId>
     <artifactId>java-api-for-mysql</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -24,6 +24,15 @@ The library is intended for desktop applications that perform insert/update/dele
 * No queries, either mapped or raw
 * Basic support for constraints
 * No support for schema migration in case of changes
+
+## Java 14 Records
+
+Java 14 records are supported same way as usual immutable objects (more details in javadoc) with the following 
+limitations:
+* The canonical constructor plays the role of record builder, ```@RecordBuilder``` annotation is ignored even if
+present.
+* All record components must be annotated with ```@Column```, i.e., record must be an exact
+representation of database table.
 
 ## Data Types
 
@@ -80,6 +89,21 @@ public class Book implements Record {
 }
 ```
 
+### Java 14 Record
+
+```java
+@Table("record_as_record_table")
+public record Book(
+    @PrimaryKey
+    @Column(Column.ID)
+    Integer id,
+
+    @Column("title")
+    String title
+) implements Record<Integer> {    
+}
+```
+
 ### Foreign Keys
 
 ```java
@@ -105,3 +129,9 @@ public class ChildTable implements Record {
     }
 }
 ```
+## JDK Compatibility
+
+| Version | JDK |
+|---|---|
+|1.2.0|14 with preview features|
+|1.0.0, 1.1.0|13|

@@ -86,16 +86,16 @@ public class TestMySqlClient {
         MySqlClient.ConstructorHandle constructorHandle = MySqlClient.cacheConstructorHandle(ImmutableRecord.class);
 
         Assert.assertNotNull(constructorHandle);
-        Assert.assertNotNull(constructorHandle.handle);
+        Assert.assertNotNull(constructorHandle.handle());
 
-        var parameters = constructorHandle.parameters;
+        var parameters = constructorHandle.parameters();
 
         assertEquals(parameters.size(), EXPECTED_PARAMS.size());
 
         for (int i = 0; i < EXPECTED_PARAMS.size(); i++) {
             var p = parameters.get(i);
-            assertEquals(p.name, EXPECTED_PARAMS.get(i).name);
-            assertEquals(p.type, EXPECTED_PARAMS.get(i).type);
+            assertEquals(p.name(), EXPECTED_PARAMS.get(i).name());
+            assertEquals(p.type(), EXPECTED_PARAMS.get(i).type());
         }
     }
 
@@ -109,7 +109,7 @@ public class TestMySqlClient {
         var actual = MySqlClient.computeColumns(ImmutableRecord.class);
 
         for (var key : EXPECTED_PARAMS) {
-            var handle = actual.get(key.name);
+            var handle = actual.get(key.name());
             Assert.assertNotNull(handle);
         }
     }

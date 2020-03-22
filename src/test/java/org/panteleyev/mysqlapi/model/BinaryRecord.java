@@ -38,8 +38,7 @@ public class BinaryRecord implements Record<Integer> {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object instanceof BinaryRecord) {
-            var that = (BinaryRecord) object;
+        } else if (object instanceof BinaryRecord that) {
             return Objects.equals(this.primKey, that.primKey)
                     && Arrays.equals(this.aField, that.aField);
         } else {

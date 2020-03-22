@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.panteleyev</groupId>
     <artifactId>java-api-for-mysql</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Annotation based Java API for MySQL database.</description>
@@ -31,8 +31,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>13</maven.compiler.source>
-        <maven.compiler.target>13</maven.compiler.target>
+        <maven.compiler.source>14</maven.compiler.source>
+        <maven.compiler.target>14</maven.compiler.target>
         <mysqlConnectorVersion>8.0.15</mysqlConnectorVersion>
         <gsonVersion>2.8.6</gsonVersion>
         <mockitoVersion>3.2.0</mockitoVersion>
@@ -42,7 +42,7 @@
         <mavenCompilerPluginVersion>3.8.1</mavenCompilerPluginVersion>
         <mavenSurefirePluginVersion>3.0.0-M4</mavenSurefirePluginVersion>
         <mavenSourcePluginVersion>3.2.0</mavenSourcePluginVersion>
-        <mavenJavadocPluginVersion>3.1.1</mavenJavadocPluginVersion>
+        <mavenJavadocPluginVersion>3.2.0</mavenJavadocPluginVersion>
         <mavenGpgPluginVersion>1.6</mavenGpgPluginVersion>
         <nexusStagingMavenPlugin>1.6.8</nexusStagingMavenPlugin>
         <!-- Test properties -->
@@ -94,7 +94,7 @@
                 <configuration>
                     <toolchains>
                         <jdk>
-                            <version>13</version>
+                            <version>14</version>
                         </jdk>
                     </toolchains>
                 </configuration>
@@ -103,6 +103,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${mavenCompilerPluginVersion}</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -123,6 +128,7 @@
                 <version>${mavenSurefirePluginVersion}</version>
                 <configuration>
                     <argLine>
+                        --enable-preview
                         -Dmysql.host=${test.mysql.host}
                         -Dmysql.port=${test.mysql.port}
                         -Dmysql.user=${test.mysql.user}
@@ -142,7 +148,7 @@
                     <notimestamp>true</notimestamp>
                     <author>false</author>
                     <bottom><![CDATA[Copyright &copy; 2018, 2020, Petr Panteleyev]]></bottom>
-                    <additionalOptions>-html5</additionalOptions>
+                    <additionalOptions>-html5 --enable-preview --source ${maven.compiler.source}</additionalOptions>
                 </configuration>
                 <executions>
                     <execution>

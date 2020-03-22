@@ -139,9 +139,7 @@ public class ImmutableRecord implements Record<Integer> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ImmutableRecord) {
-            ImmutableRecord that = (ImmutableRecord) o;
-
+        if (o instanceof ImmutableRecord that) {
             return Objects.equals(this.id, that.id)
                     && Objects.equals(this.a, that.a)
                     && Objects.equals(this.b, that.b)

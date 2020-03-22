@@ -77,9 +77,7 @@ public class ImmutableRecordWithPrimitives implements Record {
             return true;
         }
 
-        if (o instanceof ImmutableRecordWithPrimitives) {
-            ImmutableRecordWithPrimitives that = (ImmutableRecordWithPrimitives) o;
-
+        if (o instanceof ImmutableRecordWithPrimitives that) {
             return Objects.equals(this.id, that.id)
                     && Objects.equals(this.a, that.a)
                     && Objects.equals(this.b, that.b)

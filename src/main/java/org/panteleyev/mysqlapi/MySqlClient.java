@@ -44,48 +44,13 @@ import static org.panteleyev.mysqlapi.DataTypes.TYPE_LONG_PRIM;
  */
 @SuppressWarnings("rawtypes")
 public class MySqlClient {
-    static class ParameterHandle {
-        final String name;
-        final Class<?> type;
-
-        ParameterHandle(String name, Class<?> type) {
-            this.name = name;
-            this.type = type;
-        }
+    static record ParameterHandle(String name, Class<?>type) {
     }
 
-    static class ConstructorHandle {
-        final MethodHandle handle;
-        final List<ParameterHandle> parameters;
-
-        ConstructorHandle(MethodHandle handle, List<ParameterHandle> parameters) {
-            this.handle = handle;
-            this.parameters = parameters;
-        }
+    static record ConstructorHandle(MethodHandle handle, List<ParameterHandle>parameters) {
     }
 
-    static class PrimaryKeyHandle {
-        private final Field field;
-        private final VarHandle handle;
-        private final boolean autoIncrement;
-
-        PrimaryKeyHandle(Field field, VarHandle handle, boolean autoIncrement) {
-            this.field = field;
-            this.handle = handle;
-            this.autoIncrement = autoIncrement;
-        }
-
-        public Field getField() {
-            return field;
-        }
-
-        public VarHandle getHandle() {
-            return handle;
-        }
-
-        public boolean isAutoIncrement() {
-            return autoIncrement;
-        }
+    static record PrimaryKeyHandle(Field field, VarHandle handle, boolean autoIncrement) {
     }
 
     private static final String NOT_ANNOTATED = "Class is not properly annotated";
@@ -286,25 +251,16 @@ public class MySqlClient {
         }
     }
 
-
     private void fromSQL(ResultSet set, Record record, Map<String, VarHandle> columns) throws SQLException {
         for (var entry : columns.entrySet()) {
             var handle = entry.getValue();
             var value = proxy.getFieldValue(entry.getKey(), handle.varType(), set);
 
             switch (handle.varType().getName()) {
-                case "int":
-                    handle.set(record, value == null ? 0 : (int) value);
-                    break;
-                case "long":
-                    handle.set(record, value == null ? 0L : (long) value);
-                    break;
-                case "boolean":
-                    handle.set(record, value != null && (boolean) value);
-                    break;
-                default:
-                    handle.set(record, value);
-                    break;
+                case "int" -> handle.set(record, value == null ? 0 : (int) value);
+                case "long" -> handle.set(record, value == null ? 0L : (long) value);
+                case "boolean" -> handle.set(record, value != null && (boolean) value);
+                default -> handle.set(record, value);
             }
         }
     }
@@ -656,7 +612,7 @@ public class MySqlClient {
             }
 
             var primaryKey = findPrimaryKey(clazz);
-            if (!primaryKey.isAutoIncrement()) {
+            if (!primaryKey.autoIncrement()) {
                 continue;
             }
 
@@ -673,16 +629,11 @@ public class MySqlClient {
                 var st = conn.prepareStatement("SELECT MAX(" + pattern + ") FROM " + table.value());
                 try (var rs = st.executeQuery()) {
                     if (rs.next()) {
-                        switch (fieldTypeName) {
-                            case TYPE_INT:
-                            case TYPE_INTEGER:
-                                maxValue = rs.getInt(1);
-                                break;
-                            case TYPE_LONG:
-                            case TYPE_LONG_PRIM:
-                                maxValue = rs.getLong(1);
-                                break;
-                        }
+                        maxValue = switch (fieldTypeName) {
+                            case TYPE_INT, TYPE_INTEGER -> rs.getInt(1);
+                            case TYPE_LONG, TYPE_LONG_PRIM -> rs.getLong(1);
+                            default -> 0;
+                        };
                     }
                 }
             } catch (SQLException ex) {
@@ -703,15 +654,15 @@ public class MySqlClient {
      */
     public <K extends Number> K generatePrimaryKey(Class<? extends Record<K>> clazz) {
         var primaryKey = findPrimaryKey(clazz);
-        if (!primaryKey.isAutoIncrement()) {
+        if (!primaryKey.autoIncrement()) {
             throw new IllegalStateException("Primary key for class " + clazz + " is not set to auto increment");
         }
 
         return (K) primaryKeys.compute(clazz, (k, v) -> {
-            if (v instanceof Integer) {
-                return (Integer) v + 1;
-            } else if (v instanceof Long) {
-                return (Long) v + 1;
+            if (v instanceof Integer intValue) {
+                return intValue + 1;
+            } else if (v instanceof Long longValue) {
+                return longValue + 1;
             } else {
                 return 1;
             }
@@ -955,32 +906,68 @@ public class MySqlClient {
         }
     }
 
-    static ConstructorHandle cacheConstructorHandle(Class<?> clazz) {
+    static ConstructorHandle cacheConstructorHandle(Class<? extends Record> clazz) {
         Constructor<?> constructor = null;
-
-        for (var c : clazz.getConstructors()) {
-            if (c.isAnnotationPresent(RecordBuilder.class)) {
-                constructor = c;
-                break;
-            }
-        }
-
-        if (constructor == null) {
-            return null;
-        }
-
-        var paramAnnotations = constructor.getParameterAnnotations();
-        var paramTypes = constructor.getParameterTypes();
 
         var parameterHandles = new ArrayList<ParameterHandle>();
 
-        for (int i = 0; i < constructor.getParameterCount(); i++) {
-            var fieldName = Arrays.stream(paramAnnotations[i])
-                .filter(a -> a instanceof Column)
-                .findAny()
-                .map(a -> ((Column) a).value())
-                .orElseThrow(RuntimeException::new);
-            parameterHandles.add(new ParameterHandle(fieldName, paramTypes[i]));
+        if (clazz.isRecord()) {
+            // For record we find canonical constructor using component types as a pattern.
+            // Record always has one thus we don't need @RecordBuilder annotation.
+            var components = clazz.getRecordComponents();
+            var columns = new Column[components.length];
+            var types = new Class<?>[components.length];
+
+            for (int i = 0; i < components.length; i++) {
+                var comp = components[i];
+                var column = comp.getAnnotation(Column.class);
+                if (column == null) {
+                    throw new IllegalStateException("All record components must be annotated with @Column");
+                }
+
+                columns[i] = column;
+                types[i] = comp.getType();
+            }
+
+            // find canonical constructor
+            for (var c : clazz.getConstructors()) {
+                if (Arrays.equals(c.getParameterTypes(), types)) {
+                    constructor = c;
+                    break;
+                }
+            }
+
+            if (constructor == null) {
+                throw new IllegalStateException("Canonical constructor not found: impossible");
+            }
+
+            for (int i = 0; i < components.length; i++) {
+                var fieldName = columns[i].value();
+                parameterHandles.add(new ParameterHandle(fieldName, types[i]));
+            }
+        } else {
+            for (var c : clazz.getConstructors()) {
+                if (c.isAnnotationPresent(RecordBuilder.class)) {
+                    constructor = c;
+                    break;
+                }
+            }
+
+            if (constructor == null) {
+                return null;
+            }
+
+            var paramTypes = constructor.getParameterTypes();
+            var paramAnnotations = constructor.getParameterAnnotations();
+
+            for (int i = 0; i < constructor.getParameterCount(); i++) {
+                var fieldName = Arrays.stream(paramAnnotations[i])
+                    .filter(a -> a instanceof Column)
+                    .findAny()
+                    .map(a -> ((Column) a).value())
+                    .orElseThrow(RuntimeException::new);
+                parameterHandles.add(new ParameterHandle(fieldName, paramTypes[i]));
+            }
         }
 
         if (parameterHandles.isEmpty()) {

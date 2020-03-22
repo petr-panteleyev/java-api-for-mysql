@@ -159,9 +159,7 @@ public class RecordWithAllTypes implements Record<Integer> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof RecordWithAllTypes) {
-            RecordWithAllTypes that = (RecordWithAllTypes) o;
-
+        if (o instanceof RecordWithAllTypes that) {
             return Objects.equals(this.id, that.id)
                 && Objects.equals(this.a, that.a)
                 && Objects.equals(this.b, that.b)

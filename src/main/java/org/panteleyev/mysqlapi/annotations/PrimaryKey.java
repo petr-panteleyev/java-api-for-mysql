@@ -5,16 +5,16 @@ package org.panteleyev.mysqlapi.annotations;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Defines if annotated column serves as a primary key.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Retention(RUNTIME)
+@Target(FIELD)
 public @interface PrimaryKey {
     /**
      * Defines if primary key is auto-incremented integer value. Works only for fields of type int and Integer. For

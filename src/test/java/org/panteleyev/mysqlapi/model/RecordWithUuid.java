@@ -50,11 +50,10 @@ public class RecordWithUuid implements Record<Integer> {
             return true;
         }
 
-        if (!(object instanceof RecordWithUuid)) {
+        if (!(object instanceof RecordWithUuid that)) {
             return false;
         }
 
-        var that = (RecordWithUuid) object;
         return this.id == that.id
             && Objects.equals(this.uuid, that.uuid)
             && Objects.equals(this.uuidBin, that.uuidBin);

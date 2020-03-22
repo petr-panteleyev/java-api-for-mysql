@@ -20,10 +20,10 @@ public class ResultSetLongAnswer extends ResultSetAnswer implements Answer<Long>
         String fieldName = (String) inv.getArguments()[0];
         Object result = getValue(fieldName);
 
-        if (result instanceof LocalDate) {
-            return ((LocalDate) result).toEpochDay();
-        } else if (result instanceof Date) {
-            return ((Date) result).getTime();
+        if (result instanceof LocalDate localDate) {
+            return localDate.toEpochDay();
+        } else if (result instanceof Date date) {
+            return date.getTime();
         } else {
             return result == null? 0 : (Long) result;
         }

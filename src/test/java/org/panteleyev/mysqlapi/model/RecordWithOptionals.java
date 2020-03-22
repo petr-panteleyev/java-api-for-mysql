@@ -160,9 +160,7 @@ public class RecordWithOptionals implements Record<Integer> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof RecordWithOptionals) {
-            RecordWithOptionals that = (RecordWithOptionals) o;
-
+        if (o instanceof RecordWithOptionals that) {
             return Objects.equals(this.id, that.id)
                     && Objects.equals(this.a, that.a)
                     && Objects.equals(this.b, that.b)

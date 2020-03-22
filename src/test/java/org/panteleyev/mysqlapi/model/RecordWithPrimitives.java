@@ -92,9 +92,7 @@ public class RecordWithPrimitives implements Record<Integer> {
             return true;
         }
 
-        if (o instanceof RecordWithPrimitives) {
-            RecordWithPrimitives that = (RecordWithPrimitives) o;
-
+        if (o instanceof RecordWithPrimitives that) {
             return Objects.equals(this.id, that.id)
                     && Objects.equals(this.a, that.a)
                     && Objects.equals(this.b, that.b)

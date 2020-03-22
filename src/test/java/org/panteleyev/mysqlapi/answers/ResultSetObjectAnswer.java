@@ -19,10 +19,10 @@ public class ResultSetObjectAnswer extends ResultSetAnswer implements Answer<Obj
         String fieldName = (String) inv.getArguments()[0];
         Object result = getValue(fieldName);
 
-        if (result instanceof LocalDate) {
-            return ((LocalDate) result).toEpochDay();
-        } else if (result instanceof Enum<?>) {
-            return ((Enum<?>) result).name();
+        if (result instanceof LocalDate date) {
+            return date.toEpochDay();
+        } else if (result instanceof Enum<?> enm) {
+            return enm.name();
         } else {
             return result;
         }

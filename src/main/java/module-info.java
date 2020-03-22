@@ -111,6 +111,28 @@ class Book implements Record {
 }
  </code></pre>
 
+ <p><strong>Java Records</strong></p>
+ <p>
+ Java records deserialization is always performed by means of canonical constructor. {@link RecordBuilder}
+ annotation is ignored even if it is present on any of the available constructors.
+ </p>
+ <p>
+ All record components must be annotated with {@link Column}, i.e., record must be an exact representation of the
+ database table.
+ </p>
+
+ <pre><code>
+{@literal @}Table("book")
+record Book(
+    {@literal @}PrimaryKey
+    {@literal @}Column(Field.ID)
+    int id,
+    {@literal @}Column("title")
+    String title
+) implements Record {
+}
+ </code></pre>
+
  <p style="font-size: large;"><strong>Data Types</strong></p>
 
  <p>The following data types are supported:</p>
