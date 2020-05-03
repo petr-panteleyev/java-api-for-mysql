@@ -5,7 +5,7 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.Table;
@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Table("table_with_uuid")
-public class RecordWithUuid implements Record<Integer> {
+public class RecordWithUuid implements TableRecord<Integer> {
     @PrimaryKey
     @Column(Column.ID)
     private int id;

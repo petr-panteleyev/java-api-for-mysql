@@ -5,7 +5,7 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.RecordBuilder;
@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @Table("immutable_binary_table")
-public class ImmutableBinaryRecord implements Record {
+public class ImmutableBinaryRecord implements TableRecord {
     @PrimaryKey
     @Column(Column.ID)
     private final Integer id;

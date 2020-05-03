@@ -54,6 +54,8 @@ public class TestBatchInsert extends Base {
         assertEquals(retrieved.size(), records.size());
         assertEquals(map.size(), records.size());
 
+        assertEquals(getDao().getTableSize(clazz), records.size());
+
         assertRecords(records, retrieved, map);
     }
 
@@ -82,12 +84,14 @@ public class TestBatchInsert extends Base {
         assertEquals(retrieved.size(), records.size());
         assertEquals(map.size(), records.size());
 
+        assertEquals(getDao().getTableSize(clazz), records.size());
+
         assertRecords(records, retrieved, map);
     }
 
-    private void assertRecords(Collection<? extends Record> original,
-                               Collection<? extends Record> retrieved,
-                               Map<?, ? extends Record> map)
+    private void assertRecords(Collection<? extends TableRecord> original,
+                               Collection<? extends TableRecord> retrieved,
+                               Map<?, ? extends TableRecord> map)
     {
         for (var r : original) {
             assertTrue(retrieved.contains(r));

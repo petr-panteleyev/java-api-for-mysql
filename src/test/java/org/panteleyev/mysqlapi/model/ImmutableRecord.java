@@ -5,7 +5,7 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.RecordBuilder;
@@ -20,7 +20,7 @@ import java.util.Random;
 import java.util.UUID;
 
 @Table("immutable_table")
-public class ImmutableRecord implements Record<Integer> {
+public class ImmutableRecord implements TableRecord<Integer> {
     @PrimaryKey
     @Column(Column.ID)
     private final Integer id;

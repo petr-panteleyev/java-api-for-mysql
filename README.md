@@ -14,7 +14,7 @@ The library is intended for desktop applications that perform insert/update/dele
 <dependency>
     <groupId>org.panteleyev</groupId>
     <artifactId>java-api-for-mysql</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 

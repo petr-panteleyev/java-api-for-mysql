@@ -5,14 +5,14 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.RecordBuilder;
 import org.panteleyev.mysqlapi.annotations.Table;
 
 @Table("parent_table")
-public class ParentTable implements Record<Integer> {
+public class ParentTable implements TableRecord<Integer> {
     @PrimaryKey
     @Column(Column.ID)
     private int id;

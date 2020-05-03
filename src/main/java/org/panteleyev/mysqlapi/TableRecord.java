@@ -11,7 +11,7 @@ import org.panteleyev.mysqlapi.annotations.Table;
  * Database record.
  * @param <K> type of the primary key
  */
-public interface Record<K> {
+public interface TableRecord<K> {
     /**
      * Returns table name. Class must be annotated by {@link Table}.
      *
@@ -29,7 +29,7 @@ public interface Record<K> {
      * @return table name
      * @throws IllegalStateException if class is not annotated by {@link Table}.
      */
-    static String getTableName(Class<? extends Record> table) {
+    static String getTableName(Class<? extends TableRecord> table) {
         var annotation = table.getAnnotation(Table.class);
         if (annotation != null) {
             return annotation.value();

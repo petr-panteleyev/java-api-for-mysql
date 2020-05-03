@@ -6,7 +6,7 @@
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.Table;
 import org.panteleyev.mysqlapi.annotations.RecordBuilder;
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.MySqlClient;
 
 /**
@@ -23,7 +23,7 @@ import org.panteleyev.mysqlapi.MySqlClient;
 
  <p>
  Class implementing database table is defined by the annotation {@link Table}.
- Such class must also implement interface {@link Record}.
+ Such class must also implement interface {@link TableRecord}.
  </p>
 
  <p>API currently supports the following primary key types:</p>
@@ -88,7 +88,7 @@ class Book implements Record {
 
  <pre><code>
 {@literal @}Table("book")
-class Book implements Record {
+class Book implements TableRecord {
     {@literal @}PrimaryKey
     {@literal @}Column(Field.ID)
     private final int id;
@@ -129,7 +129,7 @@ record Book(
     int id,
     {@literal @}Column("title")
     String title
-) implements Record {
+) implements TableRecord {
 }
  </code></pre>
 
@@ -189,7 +189,7 @@ record Book(
 
  <pre><code>
 {@literal @}Table("parent_table")
-public class ParentTable implements Record {
+public class ParentTable implements TableRecord {
     {@literal @}Column("data")
     {@literal @}Index(value = "data", unique = true)
     private String data;
@@ -204,7 +204,7 @@ public class ParentTable implements Record {
 
  <pre><code>
 {@literal @}Table("child_table")
-public class ChildTable implements Record {
+public class ChildTable implements TableRecord {
     {@literal @}Column("parent_data")
     {@literal @}ForeignKey(table = ParentTable.class, column = "data",
         onDelete = ReferenceOption.RESTRICT, onUpdate = ReferenceOption.CASCADE)

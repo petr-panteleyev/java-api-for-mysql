@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 public class TestUtilities {
     @Test
     public void testGetTableName() {
-        Assert.assertEquals(Record.getTableName(RecordWithAllTypes.class), "all_types_table");
+        Assert.assertEquals(TableRecord.getTableName(RecordWithAllTypes.class), "all_types_table");
         Assert.assertEquals(new RecordWithAllTypes().getTableName(), "all_types_table");
     }
 
     @Test(expectedExceptions = {IllegalStateException.class})
     public void testGetTableNameStaticNegative() {
-        Record.getTableName(NotAnnotatedRecord.class);
+        TableRecord.getTableName(NotAnnotatedRecord.class);
     }
 
     @Test(expectedExceptions = {IllegalStateException.class})

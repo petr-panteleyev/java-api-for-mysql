@@ -5,7 +5,7 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.Table;
@@ -18,7 +18,7 @@ import java.util.Random;
 import java.util.UUID;
 
 @Table("all_types_table")
-public class RecordWithAllTypes implements Record<Integer> {
+public class RecordWithAllTypes implements TableRecord<Integer> {
     @PrimaryKey
     @Column("primary_key")
     private Integer id;

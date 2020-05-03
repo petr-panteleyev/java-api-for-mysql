@@ -5,7 +5,7 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.Table;
@@ -40,7 +40,7 @@ public record RecordAsRecord(
     EnumType g,
     @Column("h")
     LocalDate h
-) implements Record<Integer> {
+) implements TableRecord<Integer> {
 
     public RecordAsRecord {
         this.f = f == null? null : f.setScale(6, RoundingMode.HALF_UP);

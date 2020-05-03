@@ -5,12 +5,12 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.Table;
 
 @Table("no_primary_key")
-public class NoPrimaryKeyRecord implements Record {
+public class NoPrimaryKeyRecord implements TableRecord {
     @Column("value")
     private String value;
 

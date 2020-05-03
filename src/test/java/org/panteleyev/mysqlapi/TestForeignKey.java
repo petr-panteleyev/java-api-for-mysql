@@ -18,7 +18,7 @@ import static org.testng.Assert.assertNull;
 @Test
 public class TestForeignKey extends Base {
 
-    private void deleteForbidden(Record record) {
+    private void deleteForbidden(TableRecord record) {
         var exception = false;
         try {
             getDao().delete(record);
@@ -41,7 +41,7 @@ public class TestForeignKey extends Base {
 
     @Test
     public void testForeignKeyOnDelete() {
-        List<Class<? extends Record>> classes = Arrays.asList(ParentTable.class, ChildTable.class);
+        List<Class<? extends TableRecord>> classes = Arrays.asList(ParentTable.class, ChildTable.class);
 
         getDao().createTables(classes);
         getDao().preload(classes);
@@ -93,7 +93,7 @@ public class TestForeignKey extends Base {
 
     @Test
     public void testForeignKeyOnUpdate() {
-        List<Class<? extends Record>> classes = Arrays.asList(ParentTable.class, ChildTable.class);
+        List<Class<? extends TableRecord>> classes = Arrays.asList(ParentTable.class, ChildTable.class);
 
         getDao().createTables(classes);
         getDao().preload(classes);

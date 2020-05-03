@@ -16,7 +16,7 @@ import static org.testng.Assert.assertTrue;
 @Test
 public class TestSelfReferenceForeignKey extends Base {
 
-    private void deleteForbidden(Record record) {
+    private void deleteForbidden(TableRecord record) {
         var exception = false;
         try {
             getDao().delete(record);
@@ -39,7 +39,7 @@ public class TestSelfReferenceForeignKey extends Base {
 
     @Test
     public void testForeignKeyOnDelete() {
-        List<Class<? extends Record>> classes = List.of(SelfReferencingTable.class);
+        List<Class<? extends TableRecord>> classes = List.of(SelfReferencingTable.class);
 
         getDao().createTables(classes);
         getDao().preload(classes);
@@ -92,7 +92,7 @@ public class TestSelfReferenceForeignKey extends Base {
 
     @Test
     public void testForeignKeyOnUpdate() {
-        List<Class<? extends Record>> classes = List.of(SelfReferencingTable.class);
+        List<Class<? extends TableRecord>> classes = List.of(SelfReferencingTable.class);
 
         getDao().createTables(classes);
         getDao().preload(classes);

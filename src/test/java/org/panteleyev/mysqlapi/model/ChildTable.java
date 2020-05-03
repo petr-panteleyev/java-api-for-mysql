@@ -5,7 +5,7 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.ForeignKey;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
@@ -14,7 +14,7 @@ import org.panteleyev.mysqlapi.annotations.ReferenceOption;
 import org.panteleyev.mysqlapi.annotations.Table;
 
 @Table("child_table")
-public class ChildTable implements Record<Integer> {
+public class ChildTable implements TableRecord<Integer> {
     @PrimaryKey
     @Column(Column.ID)
     private int id;

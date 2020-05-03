@@ -134,7 +134,7 @@ public class TestMySqlClient {
 
 
     @Test(dataProvider = "testGetSelectAllSqlDataProvider")
-    public void testGetSelectAllSql(Class<? extends Record> clazz, String expected) {
+    public void testGetSelectAllSql(Class<? extends TableRecord> clazz, String expected) {
         var dao = new MySqlClient();
         var sql = dao.getSelectAllSql(clazz);
         var sql2 = dao.getSelectAllSql(clazz);
@@ -164,7 +164,7 @@ public class TestMySqlClient {
     }
 
     @Test(dataProvider = "testGetSelectByIdSqlDataProvider")
-    public void testGetSelectByIdSql(Class<? extends Record> clazz, String expected) {
+    public void testGetSelectByIdSql(Class<? extends TableRecord> clazz, String expected) {
         var dao = new MySqlClient();
         var sql = dao.getSelectByIdSql(clazz);
         var sql2 = dao.getSelectByIdSql(clazz);
@@ -188,7 +188,7 @@ public class TestMySqlClient {
     }
 
     @Test(dataProvider = "testGetDeleteSqlDataProvider")
-    public void testGetDeleteSql(Class<? extends Record> clazz, String expected) {
+    public void testGetDeleteSql(Class<? extends TableRecord> clazz, String expected) {
         var dao = new MySqlClient();
         var sql = dao.getDeleteSQL(clazz);
         var sql2 = dao.getDeleteSQL(clazz);

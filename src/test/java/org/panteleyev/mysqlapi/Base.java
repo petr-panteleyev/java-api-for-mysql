@@ -92,17 +92,17 @@ public class Base {
         };
     }
 
-    protected <T extends Record<Integer>> T givenRandomRecord(Class<T> clazz) throws Exception {
+    protected <T extends TableRecord<Integer>> T givenRandomRecord(Class<T> clazz) throws Exception {
         Integer id = dao.generatePrimaryKey(clazz);
         return givenRandomRecordWithId(clazz, id);
     }
 
-    protected <T extends Record> T givenRandomRecordWithId(Class<T> clazz, Integer id) throws Exception {
+    protected <T extends TableRecord> T givenRandomRecordWithId(Class<T> clazz, Integer id) throws Exception {
         var method = clazz.getDeclaredMethod("newRecord", Integer.class, Random.class);
         return (T) method.invoke(null, id, RANDOM);
     }
 
-    protected <T extends Record<Integer>> T givenNullRecord(Class<T> clazz) throws Exception {
+    protected <T extends TableRecord<Integer>> T givenNullRecord(Class<T> clazz) throws Exception {
         var id = dao.generatePrimaryKey(clazz);
         var method = clazz.getDeclaredMethod("newNullRecord", Integer.class);
         return (T) method.invoke(null, id);

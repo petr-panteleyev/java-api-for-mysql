@@ -192,10 +192,10 @@ class MySqlProxy {
         return b.toString();
     }
 
-    void truncate(Connection connection, List<Class<? extends Record>> tables) {
+    void truncate(Connection connection, List<Class<? extends TableRecord>> tables) {
         try (var statement = connection.createStatement()) {
             for (var t : tables) {
-                statement.execute("TRUNCATE TABLE " + Record.getTableName(t));
+                statement.execute("TRUNCATE TABLE " + TableRecord.getTableName(t));
             }
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
@@ -339,9 +339,9 @@ class MySqlProxy {
         return b.toString();
     }
 
-    void deleteAll(Connection connection, Class<? extends Record> table) {
+    void deleteAll(Connection connection, Class<? extends TableRecord> table) {
         try (var statement = connection.createStatement()) {
-            statement.execute("DELETE FROM " + Record.getTableName(table));
+            statement.execute("DELETE FROM " + TableRecord.getTableName(table));
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }

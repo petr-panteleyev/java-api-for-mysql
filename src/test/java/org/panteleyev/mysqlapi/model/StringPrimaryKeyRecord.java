@@ -5,14 +5,14 @@ package org.panteleyev.mysqlapi.model;
  * Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
 
-import org.panteleyev.mysqlapi.Record;
+import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.PrimaryKey;
 import org.panteleyev.mysqlapi.annotations.Table;
 import java.util.Objects;
 
 @Table("string_primary_key")
-public class StringPrimaryKeyRecord implements Record<String> {
+public class StringPrimaryKeyRecord implements TableRecord<String> {
     @PrimaryKey
     @Column("prim_key")
     private String primKey;

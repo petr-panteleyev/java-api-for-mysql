@@ -55,18 +55,18 @@ public class MySqlClient {
 
     private static final String NOT_ANNOTATED = "Class is not properly annotated";
 
-    private final Map<Class<? extends Record>, Number> primaryKeys = new ConcurrentHashMap<>();
+    private final Map<Class<? extends TableRecord>, Number> primaryKeys = new ConcurrentHashMap<>();
 
-    private final Map<Class<? extends Record>, String> selectAllSql = new ConcurrentHashMap<>();
-    private final Map<Class<? extends Record>, String> selectByIdSql = new ConcurrentHashMap<>();
-    private final Map<Class<? extends Record>, String> insertSql = new ConcurrentHashMap<>();
-    private final Map<Class<? extends Record>, String> updateSql = new ConcurrentHashMap<>();
-    private final Map<Class<? extends Record>, String> deleteSql = new ConcurrentHashMap<>();
+    private final Map<Class<? extends TableRecord>, String> selectAllSql = new ConcurrentHashMap<>();
+    private final Map<Class<? extends TableRecord>, String> selectByIdSql = new ConcurrentHashMap<>();
+    private final Map<Class<? extends TableRecord>, String> insertSql = new ConcurrentHashMap<>();
+    private final Map<Class<? extends TableRecord>, String> updateSql = new ConcurrentHashMap<>();
+    private final Map<Class<? extends TableRecord>, String> deleteSql = new ConcurrentHashMap<>();
 
-    private static final Map<Class<? extends Record>, PrimaryKeyHandle> PRIMARY_KEY_HANDLE_MAP
+    private static final Map<Class<? extends TableRecord>, PrimaryKeyHandle> PRIMARY_KEY_HANDLE_MAP
         = new ConcurrentHashMap<>();
-    private static final Map<Class<? extends Record>, ConstructorHandle> CONSTRUCTOR_MAP = new ConcurrentHashMap<>();
-    private static final Map<Class<? extends Record>, Map<String, VarHandle>> COLUMN_MAP = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends TableRecord>, ConstructorHandle> CONSTRUCTOR_MAP = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends TableRecord>, Map<String, VarHandle>> COLUMN_MAP = new ConcurrentHashMap<>();
 
     private DataSource datasource;
 
@@ -128,7 +128,7 @@ public class MySqlClient {
      * @param clazz record class
      * @return record
      */
-    public <K, T extends Record<K>> Optional<T> get(K id, Class<? extends T> clazz) {
+    public <K, T extends TableRecord<K>> Optional<T> get(K id, Class<? extends T> clazz) {
         try (var conn = getDataSource().getConnection()) {
             if (!clazz.isAnnotationPresent(Table.class)) {
                 throw new IllegalStateException(NOT_ANNOTATED);
@@ -155,9 +155,7 @@ public class MySqlClient {
      * @param clazz record class
      * @return list of records
      */
-    public <T extends Record> List<T> getAll(Connection conn, Class<T> clazz) {
-        var result = new ArrayList<T>();
-
+    public <T extends TableRecord> List<T> getAll(Connection conn, Class<T> clazz) {
         try {
             if (!clazz.isAnnotationPresent(Table.class)) {
                 throw new IllegalStateException(NOT_ANNOTATED);
@@ -165,14 +163,15 @@ public class MySqlClient {
 
             var ps = conn.prepareStatement(getSelectAllSql(clazz));
             try (var set = ps.executeQuery()) {
+                var result = new ArrayList<T>(set.getFetchSize());
                 while (set.next()) {
                     result.add(fromSQL(set, clazz));
                 }
+                return result;
             }
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
-        return result;
     }
 
     /**
@@ -182,7 +181,7 @@ public class MySqlClient {
      * @param clazz record class
      * @return list of records
      */
-    public <T extends Record> List<T> getAll(Class<T> clazz) {
+    public <T extends TableRecord> List<T> getAll(Class<T> clazz) {
         try (var conn = getDataSource().getConnection()) {
             return getAll(conn, clazz);
         } catch (SQLException ex) {
@@ -199,7 +198,7 @@ public class MySqlClient {
      * @param clazz  record class
      * @param result map to fill
      */
-    public <K, T extends Record<K>> void getAll(Connection conn, Class<T> clazz, Map<K, T> result) {
+    public <K, T extends TableRecord<K>> void getAll(Connection conn, Class<T> clazz, Map<K, T> result) {
         try {
             if (!clazz.isAnnotationPresent(Table.class)) {
                 throw new IllegalStateException(NOT_ANNOTATED);
@@ -225,7 +224,7 @@ public class MySqlClient {
      * @param clazz  record class
      * @param result map to fill
      */
-    public <K, T extends Record<K>> void getAll(Class<T> clazz, Map<K, T> result) {
+    public <K, T extends TableRecord<K>> void getAll(Class<T> clazz, Map<K, T> result) {
         try (var conn = getDataSource().getConnection()) {
             getAll(conn, clazz, result);
         } catch (SQLException ex) {
@@ -233,7 +232,7 @@ public class MySqlClient {
         }
     }
 
-    static Map<String, VarHandle> computeColumns(Class<? extends Record> clazz) {
+    static Map<String, VarHandle> computeColumns(Class<? extends TableRecord> clazz) {
         try {
             var lookup = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup());
 
@@ -251,7 +250,7 @@ public class MySqlClient {
         }
     }
 
-    private void fromSQL(ResultSet set, Record record, Map<String, VarHandle> columns) throws SQLException {
+    private void fromSQL(ResultSet set, TableRecord record, Map<String, VarHandle> columns) throws SQLException {
         for (var entry : columns.entrySet()) {
             var handle = entry.getValue();
             var value = proxy.getFieldValue(entry.getKey(), handle.varType(), set);
@@ -265,7 +264,7 @@ public class MySqlClient {
         }
     }
 
-    private <T extends Record> T fromSQL(ResultSet set, ConstructorHandle builder) {
+    private <T extends TableRecord> T fromSQL(ResultSet set, ConstructorHandle builder) {
         try {
             var params = new ArrayList<>(builder.parameters.size());
             for (ParameterHandle ph : builder.parameters) {
@@ -279,7 +278,7 @@ public class MySqlClient {
         }
     }
 
-    <T extends Record> T fromSQL(ResultSet set, Class<T> clazz) {
+    <T extends TableRecord> T fromSQL(ResultSet set, Class<T> clazz) {
         var builder = CONSTRUCTOR_MAP.computeIfAbsent(clazz, MySqlClient::cacheConstructorHandle);
 
         try {
@@ -305,7 +304,7 @@ public class MySqlClient {
      *
      * @param tables list of tables
      */
-    public void createTables(List<Class<? extends Record>> tables) {
+    public void createTables(List<Class<? extends TableRecord>> tables) {
         if (getDataSource() == null) {
             throw new IllegalStateException("Database not opened");
         }
@@ -323,7 +322,7 @@ public class MySqlClient {
      * @param conn   connection
      * @param tables list of tables
      */
-    public void createTables(Connection conn, List<Class<? extends Record>> tables) {
+    public void createTables(Connection conn, List<Class<? extends TableRecord>> tables) {
         try (var st = conn.createStatement()) {
             // Step 1: drop tables in reverse order
             for (int index = tables.size() - 1; index >= 0; index--) {
@@ -395,7 +394,7 @@ public class MySqlClient {
         }
     }
 
-    String getSelectAllSql(Class<? extends Record> recordClass) {
+    String getSelectAllSql(Class<? extends TableRecord> recordClass) {
         return selectAllSql.computeIfAbsent(recordClass, clazz -> {
             var table = clazz.getAnnotation(Table.class);
             if (table == null) {
@@ -415,14 +414,14 @@ public class MySqlClient {
         });
     }
 
-    String getSelectByIdSql(Class<? extends Record> recordClass) {
+    String getSelectByIdSql(Class<? extends TableRecord> recordClass) {
         return selectByIdSql.computeIfAbsent(recordClass, clazz ->
             getSelectAllSql(clazz) +
                 " WHERE " +
                 proxy.getWhereColumnString(findPrimaryKey(clazz).field) + "=?");
     }
 
-    private String getInsertSQL(Record record) {
+    private String getInsertSQL(TableRecord record) {
         return insertSql.computeIfAbsent(record.getClass(), clazz -> {
             var b = new StringBuilder("INSERT INTO ");
 
@@ -465,7 +464,7 @@ public class MySqlClient {
         });
     }
 
-    private String getUpdateSQL(Record record) {
+    private String getUpdateSQL(TableRecord record) {
         return updateSql.computeIfAbsent(record.getClass(), clazz -> {
             var b = new StringBuilder("update ");
 
@@ -508,7 +507,7 @@ public class MySqlClient {
         });
     }
 
-    String getDeleteSQL(Class<? extends Record> clazz) {
+    String getDeleteSQL(Class<? extends TableRecord> clazz) {
         return deleteSql.computeIfAbsent(clazz, cl -> {
             var b = new StringBuilder("DELETE FROM ");
             var table = cl.getAnnotation(Table.class);
@@ -526,11 +525,11 @@ public class MySqlClient {
         });
     }
 
-    private String getDeleteSQL(Record record) {
+    private String getDeleteSQL(TableRecord record) {
         return getDeleteSQL(record.getClass());
     }
 
-    private void setColumnToPreparedStatement(Record record, PreparedStatement st, int index, Field field,
+    private void setColumnToPreparedStatement(TableRecord record, PreparedStatement st, int index, Field field,
                                               VarHandle handle) throws SQLException
     {
         var fieldType = field.getType();
@@ -548,7 +547,7 @@ public class MySqlClient {
         proxy.setFieldData(st, index, value, typeName);
     }
 
-    private void setData(Record record, PreparedStatement st, boolean update) {
+    private void setData(TableRecord record, PreparedStatement st, boolean update) {
         try {
             int index = 1;
 
@@ -576,14 +575,14 @@ public class MySqlClient {
         }
     }
 
-    private PreparedStatement getPreparedStatement(Record record, Connection conn, boolean update) throws SQLException {
+    private PreparedStatement getPreparedStatement(TableRecord record, Connection conn, boolean update) throws SQLException {
         String sql = (update) ? getUpdateSQL(record) : getInsertSQL(record);
         PreparedStatement st = conn.prepareStatement(sql);
         setData(record, st, update);
         return st;
     }
 
-    private PreparedStatement getDeleteStatement(Record record, Connection conn) throws SQLException {
+    private PreparedStatement getDeleteStatement(TableRecord record, Connection conn) throws SQLException {
         PreparedStatement st = conn.prepareStatement(getDeleteSQL(record));
 
         var primaryKey = findPrimaryKey(record.getClass());
@@ -591,7 +590,7 @@ public class MySqlClient {
         return st;
     }
 
-    private <K> PreparedStatement getDeleteStatement(K id, Class<? extends Record<K>> clazz, Connection conn) throws SQLException {
+    private <K> PreparedStatement getDeleteStatement(K id, Class<? extends TableRecord<K>> clazz, Connection conn) throws SQLException {
         PreparedStatement st = conn.prepareStatement(getDeleteSQL(clazz));
         var primaryKey = findPrimaryKey(clazz);
         setColumnToPreparedStatement(st, 1, primaryKey.field, id);
@@ -602,9 +601,9 @@ public class MySqlClient {
      * Pre-loads necessary information from the just opened database. This method must be called prior to any other
      * database operations. Otherwise primary keys may be generated incorrectly.
      *
-     * @param tables list of {@link Record} types
+     * @param tables list of {@link TableRecord} types
      */
-    public void preload(Collection<Class<? extends Record>> tables) {
+    public void preload(Collection<Class<? extends TableRecord>> tables) {
         for (var clazz : tables) {
             var table = clazz.getAnnotation(Table.class);
             if (table == null) {
@@ -652,7 +651,7 @@ public class MySqlClient {
      * @param clazz record class
      * @return primary key value
      */
-    public <K extends Number> K generatePrimaryKey(Class<? extends Record<K>> clazz) {
+    public <K extends Number> K generatePrimaryKey(Class<? extends TableRecord<K>> clazz) {
         var primaryKey = findPrimaryKey(clazz);
         if (!primaryKey.autoIncrement()) {
             throw new IllegalStateException("Primary key for class " + clazz + " is not set to auto increment");
@@ -676,7 +675,7 @@ public class MySqlClient {
      * @param record record
      * @throws IllegalArgumentException if id of the record is 0
      */
-    public void insert(Record record) {
+    public void insert(TableRecord record) {
         try (var conn = getDataSource().getConnection()) {
             insert(conn, record);
         } catch (SQLException ex) {
@@ -692,7 +691,7 @@ public class MySqlClient {
      * @param record record
      * @throws IllegalArgumentException if id of the record is 0
      */
-    public void insert(Connection conn, Record record) {
+    public void insert(Connection conn, TableRecord record) {
         try (var st = getPreparedStatement(record, conn, false)) {
             st.executeUpdate();
         } catch (SQLException ex) {
@@ -710,7 +709,7 @@ public class MySqlClient {
      * @param records list of records
      * @param <T>     type of records
      */
-    public <T extends Record> void insert(int size, List<T> records) {
+    public <T extends TableRecord> void insert(int size, List<T> records) {
         try (var conn = getConnection()) {
             insert(conn, size, records);
         } catch (SQLException ex) {
@@ -729,7 +728,7 @@ public class MySqlClient {
      * @param records list of records
      * @param <T>     type of records
      */
-    public <T extends Record> void insert(Connection conn, int size, List<T> records) {
+    public <T extends TableRecord> void insert(Connection conn, int size, List<T> records) {
         if (size < 1) {
             throw new IllegalArgumentException("Batch size must be >= 1");
         }
@@ -757,12 +756,12 @@ public class MySqlClient {
     }
 
     /**
-     * Updates record in the database. This method returns instance of the {@link Record}, i.e. supplied object is
+     * Updates record in the database. This method returns instance of the {@link TableRecord}, i.e. supplied object is
      * not changed.
      *
      * @param record record
      */
-    public void update(Record record) {
+    public void update(TableRecord record) {
         try (var conn = getDataSource().getConnection()) {
             update(conn, record);
         } catch (SQLException ex) {
@@ -771,13 +770,13 @@ public class MySqlClient {
     }
 
     /**
-     * Updates record in the database. This method returns instance of the {@link Record}, i.e. supplied object is
+     * Updates record in the database. This method returns instance of the {@link TableRecord}, i.e. supplied object is
      * not changed.
      *
      * @param conn   SQL connection
      * @param record record
      */
-    public void update(Connection conn, Record record) {
+    public void update(Connection conn, TableRecord record) {
         try (var ps = getPreparedStatement(record, conn, true)) {
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -791,7 +790,7 @@ public class MySqlClient {
      *
      * @param record record to delete
      */
-    public void delete(Record record) {
+    public void delete(TableRecord record) {
         try (var conn = getDataSource().getConnection(); var ps = getDeleteStatement(record, conn)) {
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -806,7 +805,7 @@ public class MySqlClient {
      * @param id    id of the record
      * @param clazz record type
      */
-    public <K> void delete(K id, Class<? extends Record<K>> clazz) {
+    public <K> void delete(K id, Class<? extends TableRecord<K>> clazz) {
         try (var conn = getDataSource().getConnection(); var ps = getDeleteStatement(id, clazz, conn)) {
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -819,7 +818,7 @@ public class MySqlClient {
      *
      * @param table table
      */
-    public void deleteAll(Class<? extends Record> table) {
+    public void deleteAll(Class<? extends TableRecord> table) {
         try (var connection = getDataSource().getConnection()) {
             deleteAll(connection, table);
         } catch (SQLException ex) {
@@ -833,7 +832,7 @@ public class MySqlClient {
      * @param connection SQL connection
      * @param table      table class
      */
-    public void deleteAll(Connection connection, Class<? extends Record> table) {
+    public void deleteAll(Connection connection, Class<? extends TableRecord> table) {
         proxy.deleteAll(connection, table);
     }
 
@@ -844,7 +843,7 @@ public class MySqlClient {
      *
      * @param tables tables to truncate
      */
-    public void truncate(List<Class<? extends Record>> tables) {
+    public void truncate(List<Class<? extends TableRecord>> tables) {
         try (var connection = getDataSource().getConnection()) {
             truncate(connection, tables);
         } catch (SQLException ex) {
@@ -860,9 +859,9 @@ public class MySqlClient {
      * @param conn   connection
      * @param tables tables to truncate
      */
-    public void truncate(Connection conn, List<Class<? extends Record>> tables) {
+    public void truncate(Connection conn, List<Class<? extends TableRecord>> tables) {
         proxy.truncate(conn, tables);
-        for (Class<? extends Record> t : tables) {
+        for (Class<? extends TableRecord> t : tables) {
             primaryKeys.put(t, 0);
         }
     }
@@ -873,7 +872,7 @@ public class MySqlClient {
      *
      * @param table table class
      */
-    protected void resetPrimaryKey(Class<? extends Record> table) {
+    protected void resetPrimaryKey(Class<? extends TableRecord> table) {
         primaryKeys.put(table, 0);
     }
 
@@ -882,7 +881,7 @@ public class MySqlClient {
      *
      * @param tables table classes
      */
-    public void dropTables(List<Class<? extends Record>> tables) {
+    public void dropTables(List<Class<? extends TableRecord>> tables) {
         try (var conn = getDataSource().getConnection()) {
             dropTables(conn, tables);
         } catch (SQLException ex) {
@@ -896,17 +895,17 @@ public class MySqlClient {
      * @param conn   connection
      * @param tables table classes
      */
-    public void dropTables(Connection conn, List<Class<? extends Record>> tables) {
+    public void dropTables(Connection conn, List<Class<? extends TableRecord>> tables) {
         try (var st = conn.createStatement()) {
-            for (Class<? extends Record> t : tables) {
-                st.execute("DROP TABLE " + Record.getTableName(t));
+            for (Class<? extends TableRecord> t : tables) {
+                st.execute("DROP TABLE " + TableRecord.getTableName(t));
             }
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    static ConstructorHandle cacheConstructorHandle(Class<? extends Record> clazz) {
+    static ConstructorHandle cacheConstructorHandle(Class<? extends TableRecord> clazz) {
         Constructor<?> constructor = null;
 
         var parameterHandles = new ArrayList<ParameterHandle>();
@@ -990,7 +989,7 @@ public class MySqlClient {
      * @return primary key field
      * @throws IllegalStateException if there is no primary key
      */
-    static PrimaryKeyHandle findPrimaryKey(Class<? extends Record> recordClass) {
+    static PrimaryKeyHandle findPrimaryKey(Class<? extends TableRecord> recordClass) {
         return PRIMARY_KEY_HANDLE_MAP.computeIfAbsent(recordClass, clazz -> {
             for (var field : clazz.getDeclaredFields()) {
                 var column = field.getAnnotation(Column.class);
@@ -1010,7 +1009,7 @@ public class MySqlClient {
         });
     }
 
-    static <K> K getPrimaryKey(Record<K> record) {
+    static <K> K getPrimaryKey(TableRecord<K> record) {
         var primaryKey = findPrimaryKey(record.getClass());
         //noinspection unchecked
         return (K) primaryKey.handle.get(record);
@@ -1027,5 +1026,41 @@ public class MySqlClient {
     public static void addReads(Collection<Module> modules) {
         var thisModule = MySqlClient.class.getModule();
         modules.forEach(thisModule::addReads);
+    }
+
+    /**
+     * Returns amount of rows in the specified table.
+     *
+     * @param conn  connection
+     * @param clazz table class
+     * @return amount of rows
+     */
+    public int getTableSize(Connection conn, Class<? extends TableRecord> clazz) {
+        var tableName = TableRecord.getTableName(clazz);
+
+        try (var st = conn.createStatement()) {
+            var rs = st.executeQuery("SELECT COUNT(1) FROM " + tableName);
+            if (rs.first()) {
+                return rs.getInt(1);
+            } else {
+                return 0;
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Returns amount of rows in the specified table.
+     *
+     * @param clazz table class
+     * @return amount of rows
+     */
+    public int getTableSize(Class<? extends TableRecord> clazz) {
+        try (var conn = getDataSource().getConnection()) {
+            return getTableSize(conn, clazz);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

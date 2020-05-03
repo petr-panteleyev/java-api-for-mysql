@@ -28,16 +28,16 @@ public class TestRecords extends Base {
     private static final int RECORD_COUNT_1 = 10;
     private static final int RECORD_COUNT_2 = 10;
 
-    private static final List<Class<? extends Record>> ALL_CLASSES =
+    private static final List<Class<? extends TableRecord>> ALL_CLASSES =
         Arrays.asList(RecordWithAllTypes.class, RecordWithOptionals.class,
             ImmutableBinaryRecord.class, BinaryRecord.class);
 
     @Test(dataProvider = "recordClasses")
-    public void testRecordCreation(Class<? extends Record<Integer>> clazz) throws Exception {
+    public void testRecordCreation(Class<? extends TableRecord<Integer>> clazz) throws Exception {
         getDao().createTables(Collections.singletonList(clazz));
         getDao().preload(Collections.singletonList(clazz));
 
-        var idMap = new HashMap<Integer, Record<Integer>>();
+        var idMap = new HashMap<Integer, TableRecord<Integer>>();
 
         // Create all new records
         for (int i = 0; i < RECORD_COUNT_1; i++) {
@@ -55,8 +55,8 @@ public class TestRecords extends Base {
         getDao().createTables(ALL_CLASSES);
         getDao().preload(ALL_CLASSES);
 
-        var idMap1 = new HashMap<Integer, Record<Integer>>();
-        var idMap2 = new HashMap<Integer, Record<Integer>>();
+        var idMap1 = new HashMap<Integer, TableRecord<Integer>>();
+        var idMap2 = new HashMap<Integer, TableRecord<Integer>>();
 
         var t1 = new Thread(() -> {
             for (int i = 0; i < RECORD_COUNT_1; i++) {
@@ -93,7 +93,7 @@ public class TestRecords extends Base {
     }
 
     @Test(dataProvider = "recordClasses")
-    public void testRecordPutGet(Class<? extends Record<Integer>> clazz) throws Exception {
+    public void testRecordPutGet(Class<? extends TableRecord<Integer>> clazz) throws Exception {
         getDao().createTables(Collections.singletonList(clazz));
         getDao().preload(Collections.singletonList(clazz));
 
@@ -107,7 +107,7 @@ public class TestRecords extends Base {
     }
 
     @Test(dataProvider = "recordClasses")
-    public void testRecordPutDelete(Class<? extends Record<Integer>> clazz) throws Exception {
+    public void testRecordPutDelete(Class<? extends TableRecord<Integer>> clazz) throws Exception {
         getDao().createTables(Collections.singletonList(clazz));
         getDao().preload(Collections.singletonList(clazz));
 
@@ -135,7 +135,7 @@ public class TestRecords extends Base {
     }
 
     @Test(dataProvider = "recordClasses")
-    public void testRecordUpdate(Class<? extends Record<Integer>> clazz) throws Exception {
+    public void testRecordUpdate(Class<? extends TableRecord<Integer>> clazz) throws Exception {
         getDao().createTables(Collections.singletonList(clazz));
         getDao().preload(Collections.singletonList(clazz));
 
@@ -152,7 +152,7 @@ public class TestRecords extends Base {
     }
 
     @Test(dataProvider = "recordClasses")
-    public void testNullFields(Class<? extends Record<Integer>> clazz) throws Exception {
+    public void testNullFields(Class<? extends TableRecord<Integer>> clazz) throws Exception {
         getDao().createTables(Collections.singletonList(clazz));
         getDao().preload(Collections.singletonList(clazz));
 
@@ -196,12 +196,12 @@ public class TestRecords extends Base {
 
     @Test
     public void testTruncate() {
-        List<Class<? extends Record>> classes = Arrays.asList(RecordWithAllTypes.class, RecordWithPrimitives.class);
+        List<Class<? extends TableRecord>> classes = Arrays.asList(RecordWithAllTypes.class, RecordWithPrimitives.class);
 
         getDao().createTables(classes);
         getDao().preload(classes);
 
-        List<Record> l1 = Arrays.asList(
+        List<TableRecord> l1 = Arrays.asList(
             RecordWithAllTypes.newRecord(getDao().generatePrimaryKey(RecordWithAllTypes.class), RANDOM),
             RecordWithAllTypes.newRecord(getDao().generatePrimaryKey(RecordWithAllTypes.class), RANDOM),
             RecordWithAllTypes.newRecord(getDao().generatePrimaryKey(RecordWithAllTypes.class), RANDOM),
@@ -209,7 +209,7 @@ public class TestRecords extends Base {
             RecordWithAllTypes.newRecord(getDao().generatePrimaryKey(RecordWithAllTypes.class), RANDOM)
         );
 
-        List<Record> l2 = Arrays.asList(
+        List<TableRecord> l2 = Arrays.asList(
             RecordWithPrimitives.newRecord(getDao().generatePrimaryKey(RecordWithPrimitives.class), RANDOM),
             RecordWithPrimitives.newRecord(getDao().generatePrimaryKey(RecordWithPrimitives.class), RANDOM),
             RecordWithPrimitives.newRecord(getDao().generatePrimaryKey(RecordWithPrimitives.class), RANDOM)
@@ -233,8 +233,8 @@ public class TestRecords extends Base {
         assertEquals((int) getDao().generatePrimaryKey(RecordWithPrimitives.class), 1);
     }
 
-    private <T extends Record> void checkCreatedRecord(Class<T> clazz, Map<Integer, Record<Integer>> idMap,
-                                                       int count)
+    private <T extends TableRecord> void checkCreatedRecord(Class<T> clazz, Map<Integer, TableRecord<Integer>> idMap,
+                                                            int count)
     {
         // Get all records back in one request
         List<T> result = getDao().getAll(clazz);
@@ -245,7 +245,7 @@ public class TestRecords extends Base {
 
         // Check uniqueness of all primary keys
         assertEquals(result.stream()
-            .map(Record::getPrimaryKey)
+            .map(TableRecord::getPrimaryKey)
             .distinct()
             .count(), count);
     }
