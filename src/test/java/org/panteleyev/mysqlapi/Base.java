@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.panteleyev.mysqlapi.model.ImmutableBinaryRecord;
@@ -20,7 +19,6 @@ import org.testng.annotations.DataProvider;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Objects;
 import java.util.Random;
 
@@ -31,7 +29,7 @@ public class Base {
 
     private DataSource dataSource;
 
-    private static String TEST_DB_NAME = "TestDB";
+    private static final String TEST_DB_NAME = "TestDB";
 
     void setDao(MySqlClient dao) {
         this.dao = dao;
@@ -74,7 +72,7 @@ public class Base {
     @AfterClass
     public void cleanupMySQL() throws Exception {
         try (var conn = dataSource.getConnection()) {
-            Statement st = conn.createStatement();
+            var st = conn.createStatement();
             st.execute("DROP DATABASE " + TEST_DB_NAME);
         }
     }

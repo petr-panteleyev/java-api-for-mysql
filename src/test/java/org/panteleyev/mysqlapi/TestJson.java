@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import com.google.gson.JsonParser;
 import org.panteleyev.mysqlapi.model.RecordWithJson;
@@ -17,18 +16,22 @@ import static org.testng.Assert.assertEquals;
 public class TestJson extends Base {
     private static final String EMPTY_JSON_STRING = "{}";
 
-    private static final String PLAIN_JSON_STRING = "{\n" +
-        "    \"a\" : \"a-value\",\n" +
-        "    \"b\" : \"b-value\"\n" +
-        "}";
+    private static final String PLAIN_JSON_STRING = """
+        {
+            "a" : "a-value",
+            "b" : "b-value"
+        }
+        """;
 
-    private static final String COMPLEX_JSON_STRING = "{\n" +
-        "  \"a\": \"a-value\",\n" +
-        "  \"b\": \"b-value\",\n" +
-        "  \"c\": {\n" +
-        "    \"d\": \"d-value\"\n" +
-        "  }\n" +
-        "}";
+    private static final String COMPLEX_JSON_STRING = """
+        {
+          "a": "a-value",
+          "b": "b-value",
+          "c": {
+            "d": "d-value"
+          }
+        }
+        """;
 
     @DataProvider(name = "testJsonTableProvider")
     public Object[][] testJsonTableProvider() {

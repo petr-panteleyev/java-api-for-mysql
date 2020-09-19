@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import org.panteleyev.mysqlapi.annotations.Column;
 import org.panteleyev.mysqlapi.annotations.ForeignKey;
@@ -1040,7 +1039,7 @@ public class MySqlClient {
 
         try (var st = conn.createStatement()) {
             var rs = st.executeQuery("SELECT COUNT(1) FROM " + tableName);
-            if (rs.first()) {
+            if (rs.next()) {
                 return rs.getInt(1);
             } else {
                 return 0;

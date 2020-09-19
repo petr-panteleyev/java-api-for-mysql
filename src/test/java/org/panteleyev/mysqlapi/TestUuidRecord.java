@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import org.panteleyev.mysqlapi.model.RecordWithUuid;
 import org.testng.Assert;
@@ -20,8 +19,8 @@ public class TestUuidRecord extends Base {
         getDao().preload(Collections.singletonList(RecordWithUuid.class));
 
         int id = getDao().generatePrimaryKey(RecordWithUuid.class);
-        UUID uuid = UUID.randomUUID();
-        UUID uuidBin = UUID.randomUUID();
+        var uuid = UUID.randomUUID();
+        var uuidBin = UUID.randomUUID();
 
         var record = new RecordWithUuid(id, uuid, uuidBin);
 

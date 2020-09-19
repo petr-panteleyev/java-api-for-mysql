@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi.model;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi.model;
 
 import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
@@ -52,7 +51,7 @@ public class BinaryRecord implements TableRecord<Integer> {
     }
 
     public static BinaryRecord newRecord(Integer id, Random random) {
-        byte[] a = new byte[1000];
+        var a = new byte[1000];
         random.nextBytes(a);
 
         return new BinaryRecord(id, a);

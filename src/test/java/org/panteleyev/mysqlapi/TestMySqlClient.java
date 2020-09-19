@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import org.panteleyev.mysqlapi.answers.ResultSetBigDecimalAnswer;
 import org.panteleyev.mysqlapi.answers.ResultSetBooleanAnswer;
@@ -83,7 +82,7 @@ public class TestMySqlClient {
 
     @Test
     public void testCacheConstructorHandle() {
-        MySqlClient.ConstructorHandle constructorHandle = MySqlClient.cacheConstructorHandle(ImmutableRecord.class);
+        var constructorHandle = MySqlClient.cacheConstructorHandle(ImmutableRecord.class);
 
         Assert.assertNotNull(constructorHandle);
         Assert.assertNotNull(constructorHandle.handle());

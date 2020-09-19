@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi.model;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi.model;
 
 import org.panteleyev.mysqlapi.TableRecord;
 import org.panteleyev.mysqlapi.annotations.Column;
@@ -43,7 +42,7 @@ public record RecordAsRecord(
 ) implements TableRecord<Integer> {
 
     public RecordAsRecord {
-        this.f = f == null? null : f.setScale(6, RoundingMode.HALF_UP);
+        f = f == null? null : f.setScale(6, RoundingMode.HALF_UP);
     }
 
     public static RecordAsRecord newRecord(Integer id, Random random) {
@@ -54,7 +53,7 @@ public record RecordAsRecord(
             random.nextBoolean(),
             new Date(),
             random.nextLong(),
-            new BigDecimal(random.nextDouble()).setScale(6, RoundingMode.HALF_UP),
+            BigDecimal.valueOf(random.nextDouble()).setScale(6, RoundingMode.HALF_UP),
             EnumType.F1,
             LocalDate.now()
         );

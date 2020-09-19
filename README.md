@@ -5,18 +5,9 @@ Annotation based Java API for MySQL.
 The library is intended for desktop applications that perform insert/update/delete operations only. 
 
 [![BSD-2 license](https://img.shields.io/badge/License-BSD--2-informational.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-15-orange?logo=java)](https://www.oracle.com/java/technologies/javase-downloads.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.panteleyev/java-api-for-mysql/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.panteleyev/java-api-for-mysql/)
 [![Javadocs](http://www.javadoc.io/badge/org.panteleyev/java-api-for-mysql.svg)](http://www.javadoc.io/doc/org.panteleyev/java-api-for-mysql)
-
-### Artifact
-
-```
-<dependency>
-    <groupId>org.panteleyev</groupId>
-    <artifactId>java-api-for-mysql</artifactId>
-    <version>1.3.0</version>
-</dependency>
-```
 
 ## Limitations
 
@@ -25,9 +16,9 @@ The library is intended for desktop applications that perform insert/update/dele
 * Basic support for constraints
 * No support for schema migration in case of changes
 
-## Java 14 Records
+## Java Records
 
-Java 14 records are supported same way as usual immutable objects (more details in javadoc) with the following 
+Java records are supported same way as usual immutable objects (more details in javadoc) with the following 
 limitations:
 * The canonical constructor plays the role of record builder, ```@RecordBuilder``` annotation is ignored even if
 present.
@@ -89,7 +80,7 @@ public class Book implements Record {
 }
 ```
 
-### Java 14 Record
+### Java Record
 
 ```java
 @Table("record_as_record_table")
@@ -129,9 +120,3 @@ public class ChildTable implements Record {
     }
 }
 ```
-## JDK Compatibility
-
-| Version | JDK |
-|---|---|
-|1.2.0|14 with preview features|
-|1.0.0, 1.1.0|13|

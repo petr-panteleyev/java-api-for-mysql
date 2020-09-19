@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import org.panteleyev.mysqlapi.model.BinaryRecord;
 import org.panteleyev.mysqlapi.model.ImmutableBinaryRecord;
@@ -263,6 +262,5 @@ public class TestRecords extends Base {
 
         var notFound = getDao().get(UUID.randomUUID(), UuidPrimaryKeyRecord.class);
         assertTrue(notFound.isEmpty());
-
     }
 }

@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -80,7 +79,7 @@ interface DataReaders {
 
     BiFunction<ResultSet, String, UUID> UUID_STRING_READER = (ResultSet rs, String name) -> {
         try {
-            String uuid = rs.getString(name);
+            var uuid = rs.getString(name);
             return uuid == null ? null : UUID.fromString(uuid);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);

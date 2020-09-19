@@ -1,9 +1,8 @@
-package org.panteleyev.mysqlapi;
-
 /*
- * Copyright (c) Petr Panteleyev. All rights reserved.
- * Licensed under the BSD license. See LICENSE file in the project root for full license information.
+ Copyright (c) Petr Panteleyev. All rights reserved.
+ Licensed under the BSD license. See LICENSE file in the project root for full license information.
  */
+package org.panteleyev.mysqlapi;
 
 import org.panteleyev.mysqlapi.model.RecordWithPrimitives;
 import org.panteleyev.mysqlapi.model.StringPrimaryKeyRecord;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import static org.testng.Assert.assertEquals;
@@ -37,7 +35,7 @@ public class TestBatchInsert extends Base {
         getDao().preload(Collections.singletonList(clazz));
 
         // Create records
-        List<RecordWithPrimitives> records = new ArrayList<>(count);
+        var records = new ArrayList<RecordWithPrimitives>(count);
         for (int i = 0; i < count; i++) {
             records.add(RecordWithPrimitives.newRecord(getDao().generatePrimaryKey(clazz), RANDOM));
         }
@@ -46,7 +44,7 @@ public class TestBatchInsert extends Base {
         getDao().insert(batchSize, records);
 
         // Retrieve records
-        List<RecordWithPrimitives> retrieved = getDao().getAll(clazz);
+        var retrieved = getDao().getAll(clazz);
         var map = new HashMap<Integer, RecordWithPrimitives>();
         getDao().getAll(clazz, map);
 
@@ -67,7 +65,7 @@ public class TestBatchInsert extends Base {
         getDao().preload(Collections.singletonList(clazz));
 
         // Create records
-        List<StringPrimaryKeyRecord> records = new ArrayList<>(count);
+        var records = new ArrayList<StringPrimaryKeyRecord>(count);
         for (int i = 0; i < count; i++) {
             records.add(new StringPrimaryKeyRecord(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
         }
@@ -76,7 +74,7 @@ public class TestBatchInsert extends Base {
         getDao().insert(batchSize, records);
 
         // Retrieve records
-        List<StringPrimaryKeyRecord> retrieved = getDao().getAll(clazz);
+        var retrieved = getDao().getAll(clazz);
         var map = new HashMap<String, StringPrimaryKeyRecord>();
         getDao().getAll(clazz, map);
 
