@@ -5,7 +5,7 @@ Annotation based Java API for MySQL.
 The library is intended for desktop applications that perform insert/update/delete operations only. 
 
 [![BSD-2 license](https://img.shields.io/badge/License-BSD--2-informational.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/Java-15-orange?logo=java)](https://www.oracle.com/java/technologies/javase-downloads.html)
+[![Java](https://img.shields.io/badge/Java-16-orange?logo=java)](https://www.oracle.com/java/technologies/javase-downloads.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.panteleyev/java-api-for-mysql/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.panteleyev/java-api-for-mysql/)
 [![Javadocs](http://www.javadoc.io/badge/org.panteleyev/java-api-for-mysql.svg)](http://www.javadoc.io/doc/org.panteleyev/java-api-for-mysql)
 
