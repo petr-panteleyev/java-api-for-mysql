@@ -228,7 +228,6 @@ open module org.panteleyev.mysqlapi {
     requires java.base;
     requires java.sql;
     requires java.naming;
-    requires mysql.connector.java;
 
     exports org.panteleyev.mysqlapi;
     exports org.panteleyev.mysqlapi.annotations;

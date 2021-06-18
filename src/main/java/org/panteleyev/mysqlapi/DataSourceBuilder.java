@@ -4,9 +4,7 @@
  */
 package org.panteleyev.mysqlapi;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.TimeZone;
 
 /**
@@ -30,18 +28,21 @@ public class DataSourceBuilder {
      */
     public DataSource build() {
         try {
-            var ds = new MysqlDataSource();
-            ds.setDatabaseName(dbName);
-            ds.setPort(port);
-            ds.setServerName(host);
-            ds.setUser(user);
-            ds.setPassword(password);
-            ds.setCharacterEncoding(characterEncoding);
-            ds.setUseSSL(useSsl);
-            ds.setAllowPublicKeyRetrieval(allowPublicKeyRetrieval);
-            ds.setServerTimezone(serverTimeZone);
+            // Using reflection to avoid hard dependency on MySQL connector jar. At least until it becomes a module.
+            var dsClass = Class.forName("com.mysql.cj.jdbc.MysqlDataSource");
+            var ds = (DataSource) dsClass.getDeclaredConstructor().newInstance();
+
+            dsClass.getDeclaredMethod("setDatabaseName", String.class).invoke(ds, dbName);
+            dsClass.getDeclaredMethod("setPort", int.class).invoke(ds, port);
+            dsClass.getDeclaredMethod("setServerName", String.class).invoke(ds, host);
+            dsClass.getDeclaredMethod("setUser", String.class).invoke(ds, user);
+            dsClass.getDeclaredMethod("setPassword", String.class).invoke(ds, password);
+            dsClass.getDeclaredMethod("setCharacterEncoding", String.class).invoke(ds, characterEncoding);
+            dsClass.getDeclaredMethod("setUseSSL", boolean.class).invoke(ds, useSsl);
+            dsClass.getDeclaredMethod("setAllowPublicKeyRetrieval", boolean.class).invoke(ds, allowPublicKeyRetrieval);
+            dsClass.getDeclaredMethod("setServerTimezone", String.class).invoke(ds, serverTimeZone);
             return ds;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
